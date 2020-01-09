@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>netcoreapp2.2;netcoreapp3.1</TargetFrameworks>
@@ -7,12 +7,13 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Company>HappyTravel.com</Company>
     <Authors>Kirill Taran</Authors>
-    <Version>1.0.4</Version>
-    <PackageReleaseNotes>Bugfix: Emails contain invitation link for the previous customer</PackageReleaseNotes>
+    <Version>1.0.5</Version>
+    <PackageReleaseNotes>Optimized for singleton usage. 
+Refactoring</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CSharpFunctionalExtensions" Version="2.2.2" />
+    <PackageReference Include="CSharpFunctionalExtensions" Version="2.3.0" />
     <PackageReference Include="HappyTravel.EdoContracts" Version="1.1.4" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.0" />

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
@@ -26,8 +27,14 @@ namespace HappyTravel.MailSender
             _logger = logger ?? new NullLogger<SendGridMailSender>();
             _httpClientFactory = httpClientFactory;
 
-            if (!_isConfigured)
-                CheckIsConfigured(_senderOptions);
+            if (string.IsNullOrWhiteSpace(_senderOptions.ApiKey))
+                throw new ArgumentNullException(nameof(_senderOptions.ApiKey));
+
+            if (_senderOptions.BaseUrl is null)
+                throw new ArgumentNullException(nameof(_senderOptions.BaseUrl));
+
+            if (_senderOptions.SenderAddress.Equals(default))
+                throw new ArgumentNullException(nameof(_senderOptions.SenderAddress));
         }
 
 
@@ -115,31 +122,14 @@ namespace HappyTravel.MailSender
         }
 
 
-        private void CheckIsConfigured(SenderOptions senderOptions)
-        {
-            if (string.IsNullOrWhiteSpace(senderOptions.ApiKey))
-                throw new ArgumentNullException(nameof(senderOptions.ApiKey));
-
-            if (senderOptions.BaseUrl is null)
-                throw new ArgumentNullException(nameof(senderOptions.BaseUrl));
-
-            if (senderOptions.SenderAddress.Equals(default))
-                throw new ArgumentNullException(nameof(senderOptions.SenderAddress));
-
-            _isConfigured = true;
-        }
-
-
         private PropertyInfo[] GetProperties<TMessageData>(string templateId, TMessageData messageData)
         {
             if (_templateProperties.TryGetValue(templateId, out var properties))
                 return properties;
 
-            properties = messageData != null 
-                ? messageData.GetType().GetProperties() 
-                : new PropertyInfo[]{};
-
+            properties = messageData!.GetType().GetProperties();
             _templateProperties.TryAdd(templateId, properties);
+
             return properties;
         }
 
@@ -161,9 +151,8 @@ namespace HappyTravel.MailSender
         public static string HttpClientName = "SendGrid";
 
         private readonly IHttpClientFactory _httpClientFactory;
-        private bool _isConfigured;
         private readonly ILogger<SendGridMailSender> _logger;
         private readonly SenderOptions _senderOptions;
-        private readonly Dictionary<string, PropertyInfo[]> _templateProperties = new Dictionary<string, PropertyInfo[]>();
+        private readonly ConcurrentDictionary<string, PropertyInfo[]> _templateProperties = new ConcurrentDictionary<string, PropertyInfo[]>();
     }
 }
