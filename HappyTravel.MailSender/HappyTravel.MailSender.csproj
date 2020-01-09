@@ -7,8 +7,8 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Company>HappyTravel.com</Company>
     <Authors>Kirill Taran</Authors>
-    <Version>1.0.3</Version>
-    <PackageReleaseNotes>EmailAddress model added</PackageReleaseNotes>
+    <Version>1.0.4</Version>
+    <PackageReleaseNotes>Bugfix: Emails contain invitation link for the previous customer</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
