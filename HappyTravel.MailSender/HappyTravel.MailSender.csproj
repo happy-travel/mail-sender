@@ -8,8 +8,9 @@
     <Company>HappyTravel.com</Company>
     <Authors>Kirill Taran</Authors>
     <Version>1.0.5</Version>
-    <PackageReleaseNotes>Optimized for singleton usage. 
-Refactoring</PackageReleaseNotes>
+    <PackageReleaseNotes>Optimized for singleton usage.Refactoring</PackageReleaseNotes>
+    <PackageProjectUrl>https://github.com/happy-travel/mail-sender</PackageProjectUrl>
+    <RepositoryURL>https://github.com/happy-travel/mail-sender</RepositoryURL>    
   </PropertyGroup>
 
   <ItemGroup>
