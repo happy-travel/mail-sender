@@ -7,19 +7,17 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Company>HappyTravel.com</Company>
     <Authors>Kirill Taran</Authors>
-    <Version>1.0.5</Version>
-    <PackageReleaseNotes>Optimized for singleton usage.Refactoring</PackageReleaseNotes>
+    <Version>1.0.6</Version>
+    <PackageReleaseNotes>Removed money formatter</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/happy-travel/mail-sender</PackageProjectUrl>
     <RepositoryURL>https://github.com/happy-travel/mail-sender</RepositoryURL>    
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CSharpFunctionalExtensions" Version="2.3.0" />
-    <PackageReference Include="HappyTravel.EdoContracts" Version="1.1.4" />
+    <PackageReference Include="CSharpFunctionalExtensions" Version="2.8.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.4" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.4" />
     <PackageReference Include="Sendgrid" Version="9.12.0" />
   </ItemGroup>
-
 </Project>
