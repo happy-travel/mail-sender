@@ -7,8 +7,8 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Company>HappyTravel.com</Company>
     <Authors>Kirill Taran, Hasmik Harutyunyan</Authors>
-    <Version>1.0.7</Version>
-    <PackageReleaseNotes>Removed money formatter</PackageReleaseNotes>
+    <Version>1.0.8</Version>
+    <PackageReleaseNotes>The camel case for template data</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/happy-travel/mail-sender</PackageProjectUrl>
     <RepositoryURL>https://github.com/happy-travel/mail-sender</RepositoryURL>    
   </PropertyGroup>

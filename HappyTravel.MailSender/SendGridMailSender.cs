@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Reflection;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
 using HappyTravel.MailSender.Infrastructure;
@@ -13,6 +12,8 @@ using HappyTravel.MailSender.Infrastructure.Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using EmailAddress = HappyTravel.MailSender.Models.EmailAddress;
@@ -21,11 +22,11 @@ namespace HappyTravel.MailSender
 {
     public class SendGridMailSender : IMailSender
     {
-        public SendGridMailSender(IOptions<SenderOptions> senderOptions, IHttpClientFactory httpClientFactory, ILogger<SendGridMailSender> logger)
+        public SendGridMailSender(IHttpClientFactory httpClientFactory, ILogger<SendGridMailSender>? logger, IOptions<SenderOptions> senderOptions)
         {
             _senderOptions = senderOptions.Value;
             _logger = logger ?? new NullLogger<SendGridMailSender>();
-            _httpClientFactory = httpClientFactory;
+            _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
 
             if (string.IsNullOrWhiteSpace(_senderOptions.ApiKey))
                 throw new ArgumentNullException(nameof(_senderOptions.ApiKey));
@@ -77,12 +78,12 @@ namespace HappyTravel.MailSender
             if (!enumerable.Any())
                 return Result.Failure("No recipient addresses provided");
 
-            var templateData = GetTemplateData(templateId, messageData);
+            var templateData = GetTemplateData(messageData);
             using var httpClient = _httpClientFactory.CreateClient(HttpClientName);
             var client = new SendGridClient(httpClient, _senderOptions.ApiKey);
             try
             {
-                var result = Result.Ok();
+                var result = Result.Success();
                 foreach (var address in enumerable)
                 {
                     var message = new SendGridMessage
@@ -103,13 +104,13 @@ namespace HappyTravel.MailSender
                     {
                         var error = await response.Body.ReadAsStringAsync();
                         var failure =
-                            $"Could not send an e-mail {templateId} to {address}, a server responded: '{error}' with status code '{response.StatusCode}'";
+                            $"Could not send an e-mail {templateId} to {address}, a server responded: '{error}' with the status code '{response.StatusCode}'";
                         result = Result.Combine(result, Result.Failure(failure));
 
                         _logger.LogSendMailError(failure);
                     }
 
-                    result = Result.Combine(result, Result.Ok());
+                    result = Result.Combine(result, Result.Success());
                 }
 
                 return result;
@@ -117,42 +118,44 @@ namespace HappyTravel.MailSender
             catch (Exception ex)
             {
                 _logger.LogSendMailException(ex);
-                return Result.Failure("Unhandled error occured while sending an e-mail.");
+                return Result.Failure("Unhandled error occurred while sending an e-mail.");
             }
         }
 
 
-        private PropertyInfo[] GetProperties<TMessageData>(string templateId, TMessageData messageData)
-        {
-            if (_templateProperties.TryGetValue(templateId, out var properties))
-                return properties;
-
-            properties = messageData!.GetType().GetProperties();
-            _templateProperties.TryAdd(templateId, properties);
-
-            return properties;
-        }
-
-
-        private IDictionary<string, object?> GetTemplateData<TMessageData>(string templateId, TMessageData messageData)
+        private IDictionary<string, object?> GetTemplateData<TMessageData>(TMessageData messageData)
         {
             var templateData = new ExpandoObject() as IDictionary<string, object?>;
             templateData[_senderOptions.BaseUrlTemplateName] = _senderOptions.BaseUrl;
-            if (messageData == null)
-                return templateData;
+            if (messageData != null)
+            {
+                using var stream = new MemoryStream();
+                using var writer = new StreamWriter(stream);
+                using var jsonWriter = new JsonTextWriter(writer);
 
-            foreach (var propertyInfo in GetProperties(templateId, messageData))
-                templateData[propertyInfo.Name] = propertyInfo.GetValue(messageData, null);
-
+                var serializer = new JsonSerializer {ContractResolver = ContractResolver};
+                serializer.Serialize(jsonWriter, messageData);
+                jsonWriter.Flush();
+                
+                stream.Seek(0, SeekOrigin.Begin);
+                using var reader = new StreamReader(stream);
+                using var jsonReader = new JsonTextReader(reader);
+                templateData = serializer.Deserialize<ExpandoObject>(jsonReader);
+            }
+            
+            templateData[_senderOptions.BaseUrlTemplateName] = _senderOptions.BaseUrl;
             return templateData;
         }
 
 
         public static string HttpClientName = "SendGrid";
 
+
+        private static readonly IContractResolver ContractResolver = new CamelCasePropertyNamesContractResolver();
+
+
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<SendGridMailSender> _logger;
         private readonly SenderOptions _senderOptions;
-        private readonly ConcurrentDictionary<string, PropertyInfo[]> _templateProperties = new ConcurrentDictionary<string, PropertyInfo[]>();
     }
 }
