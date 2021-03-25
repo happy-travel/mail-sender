@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HappyTravel.MailSender", "HappyTravel.MailSender\HappyTravel.MailSender.csproj", "{E3AB0324-C486-42DE-89C5-C10EF19BD60D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HappyTravel.MailSenderTests", "HappyTravel.MailSenderTests\HappyTravel.MailSenderTests.csproj", "{6D407F00-1C88-44B2-9E77-0076553BC072}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HappyTravel.MailSender.UnitTests", "HappyTravel.MailSenderTests\HappyTravel.MailSender.UnitTests.csproj", "{6D407F00-1C88-44B2-9E77-0076553BC072}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

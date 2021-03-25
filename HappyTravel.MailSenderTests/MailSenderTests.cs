@@ -9,7 +9,7 @@ using Moq;
 using SendGrid;
 using Xunit;
 
-namespace HappyTravel.MailSenderTests
+namespace HappyTravel.MailSender.UnitTests
 {
     public class MailSenderTests
     {
