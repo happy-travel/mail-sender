@@ -7,8 +7,8 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Company>HappyTravel.com</Company>
     <Authors>Kirill Taran, Hasmik Harutyunyan</Authors>
-    <Version>1.2.0</Version>
-    <PackageReleaseNotes>Updated to .Net 5</PackageReleaseNotes>
+    <Version>1.2.0.1</Version>
+    <PackageReleaseNotes>Renamed project and namespace for unit tests</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/happy-travel/mail-sender</PackageProjectUrl>
     <RepositoryURL>https://github.com/happy-travel/mail-sender</RepositoryURL>    
   </PropertyGroup>
